@@ -177,6 +177,13 @@ namespace SistemaGestionWebAPI.Models
             }
         }
 
+        public static Producto UpdateStockProducto(long id, int cantidadVendidos)
+        {
+            Producto producto = ObtenerProducto(id);
+            producto.Stock -= cantidadVendidos;
+            return ActualizarProducto(producto);
+        }
+
 
     }
 }

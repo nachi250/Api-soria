@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SistemaGestionWebAPI.Models
 {
-    internal class Venta
+    public class Venta
     {
         private long id;
         private string comentarios;

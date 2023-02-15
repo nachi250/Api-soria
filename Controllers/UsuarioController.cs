@@ -14,6 +14,12 @@ namespace SistemaGestionWebAPI.Controllers
             return ManejadorUsuario.ObtenerUsuarioLogin(usuario, contraseña);
         }
 
+        [HttpGet("{usuario}")]
+        public Usuario GetUsuario(string nombreUsuario) 
+        {
+            return ManejadorUsuario.ObtenerUsuarioUser(nombreUsuario);
+        }
+
         [HttpPost]
         public void CrearUsuario(Usuario usuario)
         {

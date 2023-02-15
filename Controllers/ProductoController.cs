@@ -8,6 +8,18 @@ namespace SistemaGestionWebAPI.Controllers
     [ApiController]
     public class ProductoController : ControllerBase
     {
+        [HttpGet("{id}")]
+        public List<Producto> GetProductos(long id)
+        {
+            return ManejadorProducto.ObtenerProductos(id);
+        }
+
+        [HttpPost]
+        public void CrearProducto(Producto producto)
+        {
+            ManejadorProducto.InsertarProducto(producto);
+        }
+
         [HttpPut]
         public void ModificarProducto(Producto producto)
         {
@@ -20,10 +32,7 @@ namespace SistemaGestionWebAPI.Controllers
             ManejadorProducto.DeleteProducto(id);
         }
 
-        [HttpPost]
-        public void CrearProducto(Producto producto)
-        {
-            ManejadorProducto.InsertarProducto(producto);
-        }
+
+
     }
 }

@@ -11,7 +11,7 @@ namespace SistemaGestionWebAPI.Models
     internal static class ManejadorUsuario
     {
         static string cadenaDeConexion = "Data Source=IGNACIO-PC\\SQLEXPRESS;Initial Catalog=SistemaGestion;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-        public static Usuario ObtenerUsuario(long id)
+        public static Usuario ObtenerUsuarioId(long id)
         {
             Usuario usuario = new Usuario();
            
@@ -36,6 +36,34 @@ namespace SistemaGestionWebAPI.Models
                 }
             }
             
+            return usuario;
+        }
+
+        public static Usuario ObtenerUsuarioUser(string nombreUsuario)
+        {
+            Usuario usuario = new Usuario();
+
+            using (SqlConnection conn = new SqlConnection(cadenaDeConexion))
+            {
+                SqlCommand comando = new SqlCommand("SELECT * FROM Usuario WHERE @NombreUsuario=NombreUsuario", conn);
+                comando.Parameters.AddWithValue("@NombreUsuario", nombreUsuario);
+                conn.Open();
+                SqlDataReader reader = comando.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    reader.Read();
+
+                    Usuario usuario1 = new Usuario();
+                    usuario.Id = reader.GetInt64(0);
+                    usuario.Nombre = reader.GetString(1);
+                    usuario.Apellido = reader.GetString(2);
+                    usuario.NombreUsuario = reader.GetString(3);
+                    usuario.Contrasena = reader.GetString(4);
+                    usuario.Mail = reader.GetString(5);
+
+                }
+            }
+
             return usuario;
         }
 

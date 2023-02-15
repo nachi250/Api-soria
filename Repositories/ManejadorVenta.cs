@@ -9,15 +9,16 @@ namespace SistemaGestionWebAPI.Models
 {
     internal static class ManejadorVenta
     {
+        static string cadenaDeConexion = "Data Source=IGNACIO-PC\\SQLEXPRESS;Initial Catalog=SistemaGestion;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
         public static List<Venta> ObtenerVentas(long idUsuario)
         {
             List<Venta> ventas = new List<Venta>();
-            string cadenaConexion = "Data Source=IGNACIO-PC\\SQLEXPRESS;Initial Catalog=SistemaGestion;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            using (SqlConnection conn = new SqlConnection(cadenaConexion)) 
+            
+            using (SqlConnection conection = new SqlConnection(cadenaDeConexion)) 
             {
-                SqlCommand comando = new SqlCommand("SELECT * FROM Venta WHERE @IdUsuario = idUsuario", conn);
+                SqlCommand comando = new SqlCommand("SELECT * FROM Venta WHERE @IdUsuario = idUsuario", conection);
                 comando.Parameters.AddWithValue("@IdUsuario", idUsuario);
-                conn.Open();
+                conection.Open();
 
                 SqlDataReader reader = comando.ExecuteReader();
                 if (reader.HasRows)
@@ -31,11 +32,55 @@ namespace SistemaGestionWebAPI.Models
                         ventas.Add(ventaTemp);
                     }
                 }
-
                 return ventas;
+            }
+        }
+
+        public static long InsertarVenta(Venta venta)
+        {
+
+            using (SqlConnection conection = new SqlConnection(cadenaDeConexion))
+            {
+                var query = "INSERT INTO Venta (Comentarios, IdUsuario) VALUES(@Comentarios, @IdUsuario); SELECT @@IDENTITY";
+                SqlCommand comando = new SqlCommand(query, conection);
+
+                comando.Parameters.AddWithValue("@Comentarios", venta.Comentarios);
+                comando.Parameters.AddWithValue("@IdUsuario", venta.IdUsuario);
+
+                conection.Open();
+
+                return Convert.ToInt64(comando.ExecuteScalar());
+            }
+        }
+
+        public static void CargarVenta(long idUsuario, List<Producto> productosVendidos)
+        {
+            Venta venta = new Venta();
+            using (SqlConnection conection = new SqlConnection(cadenaDeConexion)) 
+            {
+                SqlCommand comando = new SqlCommand();
+                conection.Open();
+
+                venta.Comentarios = "Prueba Venta desde Postman";
+                venta.IdUsuario = idUsuario;
+                venta.Id = InsertarVenta(venta);
+
+                foreach (Producto producto in productosVendidos)
+                {
+                    ProductoVendido productoVendido = new ProductoVendido();
+                    productoVendido.Stock = producto.Stock;
+                    productoVendido.IdProducto = producto.Id;
+                    productoVendido.IdVenta = venta.Id;
+
+                    ManejadorProductoVendido.InsertarProductoVendido(productoVendido);
+
+                    ManejadorProducto.UpdateStockProducto(productoVendido.IdProducto, productoVendido.Stock);
+
+                }
 
             }
-     
         }
+
+
     }
 }
