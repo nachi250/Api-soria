@@ -74,42 +74,6 @@ namespace SistemaGestionWebAPI.Models
         }
 
 
-
-
-        public static List <Producto> ObtenerProductoVendido(long idUsuario)
-        {
-            List<long> ListaIdProductos = new List<long>();
-
-            using (SqlConnection conn = new SqlConnection(cadenaDeConexion))
-            {
-                SqlCommand comando = new SqlCommand("SELECT IdProducto FROM Venta\r\ninner join ProductoVendido\r\non venta.id = ProductoVendido.IdVenta\r\nwhere IdUsuario = @idUsuario", conn);
-
-                comando.Parameters.AddWithValue("@idUsuario", idUsuario);
-
-                conn.Open();
-
-                SqlDataReader reader = comando.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        ListaIdProductos.Add(reader.GetInt64(0));
-                    }
-                }
-            }
-            List<Producto> productos = new List<Producto>();
-            foreach (var id in ListaIdProductos)
-            {
-                Producto prodTemp = ObtenerProducto(id);
-                productos.Add(prodTemp);
-            }
-
-            return productos;
-
-        }
-
-
-
         public static Producto ActualizarProducto(Producto producto)
         {
 
