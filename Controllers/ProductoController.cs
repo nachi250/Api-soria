@@ -8,7 +8,7 @@ namespace SistemaGestionWebAPI.Controllers
     [ApiController]
     public class ProductoController : ControllerBase
     {
-        [HttpGet("{id}")]
+        [HttpGet("{idUsuario}")]
         public List<Producto> GetProductos(long id)
         {
             return ManejadorProducto.ObtenerProductos(id);
